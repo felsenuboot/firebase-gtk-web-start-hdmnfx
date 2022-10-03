@@ -1,10 +1,16 @@
 // Import stylesheets
 import './style.css';
+
 // Firebase App (the core Firebase SDK) is always required
 import { initializeApp } from 'firebase/app';
 
 // Add the Firebase products and methods that you want to use
-import {} from 'firebase/auth';
+import {
+  getAuth,
+  EmailAuthProvider,
+  signOut,
+  onAuthStateChanged,
+} from 'firebase/auth';
 import {} from 'firebase/firestore';
 
 import * as firebaseui from 'firebaseui';
@@ -27,9 +33,25 @@ let db, auth;
 
 async function main() {
   // Add Firebase project configuration object here
-  const firebaseConfig = {};
+  const firebaseConfig = {
+    apiKey: 'AIzaSyCgYzgxGjJMRZjuDY9ZVzv0wFnYA1YAA4M',
+
+    authDomain: 'fir-web-codelab-684e2.firebaseapp.com',
+
+    projectId: 'fir-web-codelab-684e2',
+
+    storageBucket: 'fir-web-codelab-684e2.appspot.com',
+
+    messagingSenderId: '1002033973815',
+
+    appId: '1:1002033973815:web:a95d5b8368cf09954d4db2',
+
+    measurementId: 'G-9H5TG0V09N',
+  };
 
   // initializeApp(firebaseConfig);
+  initializeApp(firebaseConfig);
+  auth = getAuth();
 
   // FirebaseUI config
   const uiConfig = {
@@ -48,5 +70,24 @@ async function main() {
   };
 
   // const ui = new firebaseui.auth.AuthUI(auth);
+  const ui = new firebaseui.auth.AuthUI(auth);
+
+  startRsvpButton.addEventListener('click', () => {
+    if (auth.currentUser) {
+      // User is signed in; allows user to sign out
+      signOut(auth);
+    } else {
+      // No user is signed in; allows user to sign in
+      ui.start('#firebaseui-auth-container', uiConfig);
+    }
+  });
+
+  onAuthStateChanged(auth, (user) => {
+    if (user) {
+      startRsvpButton.textContent = 'LOGOUT';
+    } else {
+      startRsvpButton.textContent = 'RSVP';
+    }
+  });
 }
 main();
